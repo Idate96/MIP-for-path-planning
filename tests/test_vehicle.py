@@ -1,4 +1,4 @@
-from src.aircraft import Vehicle
+from src.vehicle import Vehicle
 import numpy as np
 import unittest
 
