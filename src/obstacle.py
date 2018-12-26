@@ -1,6 +1,5 @@
-import matplotlib.pyplot as plt
-from matplotlib.patches import Rectangle
 import random 
+import matplotlib.pyplot as plt
 
 class obstacle:
     def __init__(self,min_size,max_size,area_size):
@@ -19,28 +18,7 @@ class obstacle:
         return not(self.x+self.size < other.x-other.size or self.x-self.size > other.x+other.size or self.y+self.size < other.y-other.size or self.y-self.size > other.y+other.size)
 
 
-obstacles = []
-min_size = 1
-max_size = 3
-area_size = 100
-num_obs = 100
-i=0
-while i<num_obs:
-    intercept  = False
-    x = obstacle(min_size,max_size,area_size)
-    for o in obstacles:
-        if(x.intersect(o)):
-            intercept = True
-            break
-    
-    if(intercept):
-        continue
-    
-    obstacles.append(x)
-    obstacles[i].draw()
-    i+=1
 
-plt.show()
 
 
 
