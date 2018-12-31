@@ -17,6 +17,8 @@ obstacles = []
 min_size = 5
 max_size = 10
 area_size = 1000
+v_max = 10
+f_max = 10
 num_obs = 5
 i=0
 while i<num_obs:
@@ -33,7 +35,7 @@ while i<num_obs:
     obstacles.append(x)
     obstacles[i].draw()
     i+=1
-5
+
 ##create vehicles
 vehicles = []
 num_vehicles = 1
@@ -51,15 +53,14 @@ m = Model("ppl")
 #add constraints
 i = 0
 while i<num_vehicles:
-    #vehicles[i].constrain(m)
+    vehicles[i].constrain(m,v_max,f_max,area_size,0,0)
     i+=1
     
 #optimize
 
 #plot
 i=0
-while i<num_vehicles:
-    plt.plot(vehicles[i].x,vehicles[i].y,'o')
-    i+=1
-
+# while i<num_vehicles:
+#     plt.plot(vehicles[i].x[0],vehicles[i].y[0],'o')
+#     i+=1
 plt.show()
