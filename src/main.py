@@ -12,11 +12,12 @@ def entry():
 if __name__ == '__main__':
     entry()
 
+##create obstacle array
 obstacles = []
-min_size = 1
-max_size = 3
-area_size = 100
-num_obs = 100
+min_size = 5
+max_size = 10
+area_size = 1000
+num_obs = 5
 i=0
 while i<num_obs:
     intercept  = False
@@ -32,6 +33,33 @@ while i<num_obs:
     obstacles.append(x)
     obstacles[i].draw()
     i+=1
+5
+##create vehicles
+vehicles = []
+num_vehicles = 1
+vehicle_mass = 50
+i=0
+T = 30
+dt = 0.1
+while i<num_vehicles:
+    vehicles.append(Vehicle(vehicle_mass,dt,T,area_size,area_size,i))
+    i+=1
+
+#initialize model
+m = Model("ppl")
+
+#add constraints
+i = 0
+while i<num_vehicles:
+    #vehicles[i].constrain(m)
+    i+=1
+    
+#optimize
+
+#plot
+i=0
+while i<num_vehicles:
+    plt.plot(vehicles[i].x,vehicles[i].y,'o')
+    i+=1
 
 plt.show()
-print('Got here')
