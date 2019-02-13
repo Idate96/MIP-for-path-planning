@@ -1,23 +1,25 @@
 from gurobipy import *
 
-Nt = 100
-dt = 0.1
+# Create a new model
+m = Model("mip1")
 
-m = Model('testmodel')
+# Create variables
+x = m.addVar(vtype=GRB.BINARY, name="x")
+y = m.addVar(vtype=GRB.BINARY, name="y")
+z = m.addVar(vtype=GRB.BINARY, name="z")
 
-# vx = m.AddVar(vtype=GRB.NUMERIC, name='velocity_x')
-# vy = m.AddVar(vtype=GRB.NUMERIC, name='velocity_y')
-# ax = m.AddVar(vtype=GRB.NUMERIC, name='acc_x')
-# ay = m.AddVar(vtype=GRB.NUMERIC, name='acc_y')
-# x = m.AddVar(vtype=GRB.NUMERIC, name='x')
-# y = m.AddVar(vtype=GRB.NUMERIC, name='y')
+# Set objective
+m.setObjective(x + y + 2 * z, GRB.MAXIMIZE)
 
+# Add constraint: x + 2 y + 3 z <= 4
+m.addConstr(x + 2 * y + 3 * z <= 4, "c0")
 
-v = m.AddVars(2, Nt, vtype=GRB.CONTINUOUS, name='velocity')
-a = m.AddVars(2, Nt, vtype=GRB.CONTINUOUS, name='acceleration')
-p = m.AddVars(2, Nt, vtype=GRB.CONTINUOUS, name='position')
+# Add constraint: x + y >= 1
+m.addConstr(x + y >= 1, "c1")
 
+m.optimize()
 
+for v in m.getVars():
+    print(v.varName, v.x)
 
-m.addConstrs((v[:, i+1] ==  v[:, i] + dt * a[:, i] for i in range(Nt-1)), name="dynamics_velocity")
-m.addConstrs((p[:, i+1] ==  p[:, i] + dt * v[:, i] + 0.5 * dt * dt * a[:, i] for i in range(Nt-1)), name="dynamics_acceleration")
+print('Obj:', m.objVal)

@@ -32,6 +32,8 @@ class Vehicle:
         m.addConstrs((self.fy[i] <= f_max for i in range(self.steps-1)), name='f_y_max')
         m.addConstrs((self.fx[i] >= -f_max for i in range(self.steps-1)), name='f_x_max')
         m.addConstrs((self.fy[i] >= -f_max for i in range(self.steps-1)), name='f_y_max')
+        m.addConstr(self.vx[0] == 0, name='vx_init_constr')
+        m.addConstr(self.vy[0] == 0, name='vy_init_constr')
 
         m.addConstrs(((self.vx[i]*self.vx[i]+self.vy[i]*self.vy[i]) <= v_max*v_max for i in range(self.steps-1)), name='f_x_max')
 
@@ -41,6 +43,11 @@ class Vehicle:
         m.addConstr(self.y[0] == self.y0, name='y_init_constr')
         m.addConstr(self.x[self.steps-1] == x_fin, name='x_fin_constr')
         m.addConstr(self.y[self.steps-1] == y_fin, name='y_fin_constr')
+
+        #add objects constraints
+
+        
+
         obj = 0
         for i in range(self.steps-1):
             if(self.x[i] == x_fin and self.y[i] == y_fin):
