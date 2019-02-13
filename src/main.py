@@ -17,9 +17,9 @@ obstacles = []
 min_size = 1
 max_size = 3
 area_size = 50
-v_max = 1000
-f_max = 100
-num_obs = 8
+v_max = 10
+f_max = 1
+num_obs = 15
 i=0
 while i<num_obs:
     intercept  = False
@@ -43,8 +43,9 @@ vehicle_mass = 50
 i=0
 T = 30
 dt = 0.1
+steps = int(T/dt)
 while i<num_vehicles:
-    vehicles.append(Vehicle(vehicle_mass,dt,T,area_size,area_size,i))
+    vehicles.append(Vehicle(vehicle_mass,dt,T,area_size,area_size,i,obstacles))
     i+=1
 
 #initialize model
