@@ -14,12 +14,12 @@ if __name__ == '__main__':
 
 ##create obstacle array
 obstacles = []
-min_size = 5
-max_size = 10
-area_size = 1000
-v_max = 10
-f_max = 10
-num_obs = 5
+min_size = 1
+max_size = 3
+area_size = 50
+v_max = 1000
+f_max = 100
+num_obs = 8
 i=0
 while i<num_obs:
     intercept  = False
@@ -53,14 +53,15 @@ m = Model("ppl")
 #add constraints
 i = 0
 while i<num_vehicles:
-    vehicles[i].constrain(m,v_max,f_max,area_size,0,0)
+    vehicles[i].constrain(m,v_max,f_max,area_size,area_size,area_size)
     i+=1
     
 #optimize
 
 #plot
 i=0
-# while i<num_vehicles:
-#     plt.plot(vehicles[i].x[0],vehicles[i].y[0],'o')
-#     i+=1
+while i<num_vehicles:
+    for j in range(int(T/dt)):
+        plt.plot(vehicles[i].x[j].x,vehicles[i].y[j].x,'o')
+    i+=1
 plt.show()
