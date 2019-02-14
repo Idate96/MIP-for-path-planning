@@ -17,11 +17,11 @@ if __name__ == '__main__':
 ##create obstacle array
 obstacles = []
 min_size = 1
-max_size = 3
+max_size = 2
 area_size = 20
 v_max = 10
 f_max = 10
-num_obs = 10
+num_obs = 5
 i = 0
 while i<num_obs:
     intercept = False
@@ -40,7 +40,7 @@ while i<num_obs:
 
 ##create vehicles
 vehicles = []
-num_vehicles = 2
+num_vehicles = 3
 vehicle_mass = 1
 i = 0
 T = 30
@@ -68,13 +68,16 @@ while i<num_vehicles:
     vehicles[i].constrain(m, vehicles)
     i+=1
 
+total = 0
+for veh in range(len(vehicles)):
+    for i in range(steps):
+        total += vehicles[veh].b[i] * i
 
 
+m.setObjective(total, GRB.MINIMIZE)
 
-# m.setObjective(quicksum(i*vehicles[0].b[i]for i in range(steps)),  GRB.MINIMIZE)
-#
-# m.optimize()
-# m.getVars()
+m.optimize()
+m.getVars()
 # Z = m.objVal
 
 # plot

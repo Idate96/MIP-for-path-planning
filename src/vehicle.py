@@ -64,18 +64,18 @@ class Vehicle:
 
             m.addConstrs((c[0,i] + c[1,i] + c[2,i] + c[3,i] <= 3 for i in range(self.steps-1)))
 
-        # new_vehicles = vehicles[0:self.id]+vehicles[self.id+1:len(vehicles)]
-        # print(new_vehicles)
-        # for veh in range(len(new_vehicles)):
-        #
-        #     e = m.addVars(4, self.steps, lb=0, vtype=GRB.BINARY)
-        #
-        #     m.addConstrs((self.x[i] - vehicles[veh].x[i] >= d - R * e[0, i] for i in range(self.steps - 1)))
-        #     m.addConstrs((-self.x[i] - vehicles[veh].x[i] >= d - R * e[1, i] for i in range(self.steps - 1)))
-        #     m.addConstrs((self.y[i] - vehicles[veh].y[i] >= d - R * e[2, i] for i in range(self.steps - 1)))
-        #     m.addConstrs((-self.y[i] - vehicles[veh].y[i] >= d - R * e[3, i] for i in range(self.steps - 1)))
-        #
-        #     m.addConstrs((e[0, i] + e[1, i] + e[2, i] + e[3, i] <= 3 for i in range(self.steps - 1)))
+        new_vehicles = vehicles[0:self.id]+vehicles[self.id+1:len(vehicles)]
+        print("HIIIIIIIIIIIIIIII", len(new_vehicles))
+        for veh in new_vehicles:
+
+            e = m.addVars(4, self.steps, lb=0, vtype=GRB.BINARY)
+
+            m.addConstrs((self.x[i] - veh.x[i] >= d - R * e[0, i] for i in range(self.steps - 1)))
+            m.addConstrs((-self.x[i] + veh.x[i] >= d - R * e[1, i] for i in range(self.steps - 1)))
+            m.addConstrs((self.y[i] - veh.y[i] >= d - R * e[2, i] for i in range(self.steps - 1)))
+            m.addConstrs((-self.y[i] + veh.y[i] >= d - R * e[3, i] for i in range(self.steps - 1)))
+
+            m.addConstrs((e[0, i] + e[1, i] + e[2, i] + e[3, i] <= 3 for i in range(self.steps - 1)))
 
         self.b = m.addVars(self.steps, lb=0, vtype=GRB.BINARY)
         for t_step in range(self.steps):
@@ -87,10 +87,10 @@ class Vehicle:
 
         m.addConstr(self.b.sum() == 1)
 
-        m.setObjective(quicksum(i*self.b[i] for i in range(self.steps)),  GRB.MINIMIZE)
-
-        m.optimize()
-        m.getVars()
+        # m.setObjective(quicksum(i*self.b[i] for i in range(self.steps)),  GRB.MINIMIZE)
+        #
+        # m.optimize()
+        # m.getVars()
         # self.Z = m.objVal
 
 
