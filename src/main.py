@@ -3,6 +3,8 @@ from vehicle import Vehicle
 from obstacle import obstacle
 import numpy as np
 import matplotlib.pyplot as plt
+import random as rand
+
 
 import utils
 
@@ -16,10 +18,10 @@ if __name__ == '__main__':
 obstacles = []
 min_size = 1
 max_size = 3
-area_size = 50
-v_max = 50
-f_max = 50
-num_obs = 15
+area_size = 20
+v_max = 10
+f_max = 10
+num_obs = 10
 i = 0
 while i<num_obs:
     intercept = False
@@ -38,32 +40,55 @@ while i<num_obs:
 
 ##create vehicles
 vehicles = []
-num_vehicles = 1
+num_vehicles = 2
 vehicle_mass = 1
 i = 0
 T = 30
 dt = 0.1
 steps = int(T/dt)
-while i<num_vehicles:
-    vehicles.append(Vehicle(vehicle_mass,dt,T,area_size,area_size,i,obstacles))
-    i+=1
+
+x0 = []; y0 = []
+x_fin = []; y_fin = []
+for i in range(num_vehicles):
+    x0.append(rand.random() * area_size)
+    y0.append(rand.random() * area_size)
+    x_fin.append(rand.random() * area_size)
+    y_fin.append(rand.random() * area_size)
 
 #initialize model
 m = Model("ppl")
+i=0
+while i<num_vehicles:
+    vehicles.append(Vehicle(vehicle_mass,dt,T,x0[i],y0[i],i,obstacles,m,v_max,f_max,area_size, x_fin[i],y_fin[i]))
+    i+=1
 
 #add constraints
 i = 0
 while i<num_vehicles:
-    vehicles[i].constrain(m,v_max,f_max,area_size,area_size,area_size)
+    vehicles[i].constrain(m, vehicles)
     i+=1
-    
-#optimize
 
-#plot
-i=0
+
+
+
+# m.setObjective(quicksum(i*vehicles[0].b[i]for i in range(steps)),  GRB.MINIMIZE)
+#
+# m.optimize()
+# m.getVars()
+# Z = m.objVal
+
+# plot
+i = 0
 while i<num_vehicles:
-    z = vehicles[i].Z
-    for j in range(z/dt):
-        plt.plot(vehicles[i].x[j].x,vehicles[i].y[j].x,'o')
+    for k in range(steps):
+        Z = str(vehicles[i].b[k])
+        if Z[-5] == "1":
+            z = k
+            break
+    for j in range(z):
+        plt.plot(vehicles[i].x[j].x, vehicles[i].y[j].x, 'o')
+    plt.plot(vehicles[i].x[0].x, vehicles[i].y[0].x, 'x', markersize = 15, color='r')
+    plt.plot(vehicles[i].x_fin, vehicles[i].y_fin, 'x', markersize = 15, color='b')
+
     i+=1
 plt.show()

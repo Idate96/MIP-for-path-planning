@@ -3,52 +3,51 @@ from gurobipy import *
 
 class Vehicle:
     
-    def __init__(self, mass: float, dt: float, T: float, x0: float, y0:float, id: int,obstacles):
+    def __init__(self, mass: float, dt: float, T: float, x0: float, y0:float, id: int,obstacles, m, v_max, f_max, area_size, x_fin:float, y_fin:float,):
         self.A = np.array([[1,0,dt,0],[0,1,0,dt],[0,0,1,0],[0,0,0,1]])
         self.B = np.array([[0,0],[0,0],[dt/mass,0],[0,dt/mass]])
         self.steps = int(T/dt) # number of time steps
         self.id = id
         self.dt = dt
-        self.x0 = 0
-        self.y0 = 0
+        self.x0 = x0
+        self.y0 = y0
         self.m = mass
         self.obstacles = obstacles
+        self.v_max = v_max
+        self.x_fin = x_fin
+        self.y_fin = y_fin
 
-    def constrain(self,m,v_max,f_max,area_size, x_fin:float, y_fin:float):
         # add variable arrays, length=amount of steps
-        self.x = m.addVars(self.steps,lb=0,ub=area_size, name='x')
-        self.y = m.addVars(self.steps,lb=0,ub=area_size, name='y')
-        self.vx = m.addVars(self.steps,lb=-v_max,ub=v_max, name='vx')
-        self.vy = m.addVars(self.steps,lb=-v_max,ub=v_max, name='vy')
-        self.fx = m.addVars(self.steps,lb=-f_max,ub=f_max, name='fx')
-        self.fy = m.addVars(self.steps,lb=-f_max,ub=f_max, name='fy')
+        self.x = m.addVars(self.steps, lb=0, ub=area_size)
+        self.y = m.addVars(self.steps, lb=0, ub=area_size)
+        self.vx = m.addVars(self.steps, lb=-v_max, ub=v_max)
+        self.vy = m.addVars(self.steps, lb=-v_max, ub=v_max)
+        self.fx = m.addVars(self.steps, lb=-f_max, ub=f_max)
+        self.fy = m.addVars(self.steps, lb=-f_max, ub=f_max)
+
+    def constrain(self, m, vehicles):
+
 
         #for every entry in the array, add constraint
-        #x_n+1 = A*X_n + B*u_N
-        m.addConstrs((self.x[i+1] == (self.x[i] + self.dt*self.vx[i]) for i in range(self.steps-1)), name='x_step_constr')  #x time step constraint
-        m.addConstrs((self.y[i+1] == (self.y[i] + self.dt*self.vy[i]) for i in range(self.steps-1)), name='y_step_constr')  #y time step constraint
-        m.addConstrs((self.vx[i+1] == (self.vx[i] + self.fx[i]*self.dt/self.m) for i in range(self.steps-1)), name='f_x_constr') #fx maximum acceleration constraint
-        m.addConstrs((self.vy[i+1] == (self.vy[i] + self.fy[i]*self.dt/self.m) for i in range(self.steps-1)), name='f_y_constr') #fy maximum acceleration constraint
-        # m.addConstrs((self.fx[i] <= f_max for i in range(self.steps-1)), name='f_x_max')
-        # m.addConstrs((self.fy[i] <= f_max for i in range(self.steps-1)), name='f_y_max')
-        # m.addConstrs((self.fx[i] >= -f_max for i in range(self.steps-1)), name='f_x_max')
-        # m.addConstrs((self.fy[i] >= -f_max for i in range(self.steps-1)), name='f_y_max')
-        m.addConstr(self.vx[0] == 0, name='vx_init_constr')
-        m.addConstr(self.vy[0] == 0, name='vy_init_constr')
-        # m.addConstr(self.vx[self.steps-1] == 0, name='vx_init_final')
-        # m.addConstr(self.vy[self.steps-1] == 0, name='vy_init_final')
+        m.addConstrs((self.x[i+1] == (self.x[i] + self.dt*self.vx[i]) for i in range(self.steps-1)))  #x time step constraint
+        m.addConstrs((self.y[i+1] == (self.y[i] + self.dt*self.vy[i]) for i in range(self.steps-1)))  #y time step constraint
+        m.addConstrs((self.vx[i+1] == (self.vx[i] + self.fx[i]*self.dt/self.m) for i in range(self.steps-1))) #fx maximum acceleration constraint
+        m.addConstrs((self.vy[i+1] == (self.vy[i] + self.fy[i]*self.dt/self.m) for i in range(self.steps-1))) #fy maximum acceleration constraint
 
-        m.addConstrs(((self.vx[i]*self.vx[i]+self.vy[i]*self.vy[i]) <= v_max*v_max for i in range(self.steps-1)), name='f_x_max')
+        m.addConstr(self.vx[0] == 0)
+        m.addConstr(self.vy[0] == 0)
+
+
+        m.addConstrs(((self.vx[i]*self.vx[i]+self.vy[i]*self.vy[i]) <= self.v_max*self.v_max for i in range(self.steps-1)))
 
         
         #initial and final position
-        m.addConstr(self.x[0] == self.x0, name='x_init_constr')
-        m.addConstr(self.y[0] == self.y0, name='y_init_constr')
-        # m.addConstr(self.x[self.steps-1] == x_fin, name='x_fin_constr')   # this should not be here such that it is able to arrive before
-        # m.addConstr(self.y[self.steps-1] == y_fin, name='y_fin_constr')   # this should not be here such that it is able to arrive before
+        m.addConstr(self.x[0] == self.x0)
+        m.addConstr(self.y[0] == self.y0)
 
         # add constraints for obstacles
         R = 100000
+        d = 1
         for obs in self.obstacles:
 
             c = m.addVars(4, self.steps, lb=0, vtype=GRB.BINARY)
@@ -58,7 +57,6 @@ class Vehicle:
             ymin = obs.y-obs.size
             ymax = obs.y+obs.size
 
-            d = 1
             m.addConstrs((self.x[i] - xmax >= d-R*c[0, i] for i in range(self.steps-1)))
             m.addConstrs((-self.x[i] + xmin >= d-R*c[1, i] for i in range(self.steps-1)))
             m.addConstrs((self.y[i] - ymax >= d-R*c[2, i] for i in range(self.steps-1)))
@@ -66,30 +64,34 @@ class Vehicle:
 
             m.addConstrs((c[0,i] + c[1,i] + c[2,i] + c[3,i] <= 3 for i in range(self.steps-1)))
 
-        # obj = 0
-        # for i in range(self.steps-1):
-        #     if (self.x[i] == x_fin and self.y[i] == y_fin):
-        #         obj += 0
-        #     else:
-        #         obj += self.dt
-        # #set vel
-        # m.setObjective(obj, GRB.MINIMIZE) #TODO: minimize travel time instead of travel distance
+        # new_vehicles = vehicles[0:self.id]+vehicles[self.id+1:len(vehicles)]
+        # print(new_vehicles)
+        # for veh in range(len(new_vehicles)):
+        #
+        #     e = m.addVars(4, self.steps, lb=0, vtype=GRB.BINARY)
+        #
+        #     m.addConstrs((self.x[i] - vehicles[veh].x[i] >= d - R * e[0, i] for i in range(self.steps - 1)))
+        #     m.addConstrs((-self.x[i] - vehicles[veh].x[i] >= d - R * e[1, i] for i in range(self.steps - 1)))
+        #     m.addConstrs((self.y[i] - vehicles[veh].y[i] >= d - R * e[2, i] for i in range(self.steps - 1)))
+        #     m.addConstrs((-self.y[i] - vehicles[veh].y[i] >= d - R * e[3, i] for i in range(self.steps - 1)))
+        #
+        #     m.addConstrs((e[0, i] + e[1, i] + e[2, i] + e[3, i] <= 3 for i in range(self.steps - 1)))
 
         self.b = m.addVars(self.steps, lb=0, vtype=GRB.BINARY)
         for t_step in range(self.steps):
 
-            m.addConstr(self.x[t_step] - x_fin <= R*(1 - self.b[t_step]))
-            m.addConstr(self.x[t_step] - x_fin >= - R * (1 - self.b[t_step]))
-            m.addConstr(self.y[t_step] - y_fin <= R * (1 - self.b[t_step]))
-            m.addConstr(self.y[t_step] - y_fin >= - R * (1 - self.b[t_step]))
+            m.addConstr(self.x[t_step] - self.x_fin <= R*(1 - self.b[t_step]))
+            m.addConstr(self.x[t_step] - self.x_fin >= - R * (1 - self.b[t_step]))
+            m.addConstr(self.y[t_step] - self.y_fin <= R * (1 - self.b[t_step]))
+            m.addConstr(self.y[t_step] - self.y_fin >= - R * (1 - self.b[t_step]))
 
         m.addConstr(self.b.sum() == 1)
 
-        m.setObjective(quicksum(i*self.b[i] for i in range(self.steps)), GRB.MINIMIZE)
+        m.setObjective(quicksum(i*self.b[i] for i in range(self.steps)),  GRB.MINIMIZE)
 
         m.optimize()
         m.getVars()
-        self.Z = m.objVal
+        # self.Z = m.objVal
 
 
-        print("OBJJJJ:", self.Z)
+        # print("OBJJJJ:", self.Z)
