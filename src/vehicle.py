@@ -3,7 +3,7 @@ from gurobipy import *
 
 class Vehicle:
     
-    def __init__(self, mass: float, dt: float, T: float, x0: float, y0:float, id: int,obstacles, m, v_max, f_max, area_size, x_fin:float, y_fin:float,):
+    def __init__(self, mass: float, dt: float, T: float, x0: float, y0:float, id: int,obstacles, m, v_max, f_max, area_size, x_fin:float, y_fin:float, wp, x_wp = None, y_wp = None):
         self.A = np.array([[1,0,dt,0],[0,1,0,dt],[0,0,1,0],[0,0,0,1]])
         self.B = np.array([[0,0],[0,0],[dt/mass,0],[0,dt/mass]])
         self.steps = int(T/dt) # number of time steps
@@ -16,6 +16,9 @@ class Vehicle:
         self.v_max = v_max
         self.x_fin = x_fin
         self.y_fin = y_fin
+        self.wp = wp
+        self.x_wp = x_wp
+        self.y_wp = y_wp
 
         # add variable arrays, length=amount of steps
         self.x = m.addVars(self.steps, lb=0, ub=area_size)
@@ -65,7 +68,6 @@ class Vehicle:
             m.addConstrs((c[0,i] + c[1,i] + c[2,i] + c[3,i] <= 3 for i in range(self.steps-1)))
 
         new_vehicles = vehicles[0:self.id]+vehicles[self.id+1:len(vehicles)]
-        print("HIIIIIIIIIIIIIIII", len(new_vehicles))
         for veh in new_vehicles:
 
             e = m.addVars(4, self.steps, lb=0, vtype=GRB.BINARY)
@@ -86,6 +88,20 @@ class Vehicle:
             m.addConstr(self.y[t_step] - self.y_fin >= - R * (1 - self.b[t_step]))
 
         m.addConstr(self.b.sum() == 1)
+
+        # if self.wp:
+        #     for i in range(len(self.x_wp)):
+        #         self.k = m.addVars(self.steps, lb=0, vtype=GRB.BINARY)
+        #         for j in range(self.steps):
+        #             m.addConstr(self.k[j] <= 1 - quicksum(self.b[0:i+1]))
+        #         for t_step in range(self.steps):
+        #             m.addConstr(self.x[t_step] - self.x_wp[i] <= R * (1 - self.k[t_step]))
+        #             m.addConstr(self.x[t_step] - self.x_wp[i] >= - R * (1 - self.k[t_step]))
+        #             m.addConstr(self.y[t_step] - self.y_wp[i] <= R * (1 - self.k[t_step]))
+        #             m.addConstr(self.y[t_step] - self.y_wp[i] >= - R * (1 - self.k[t_step]))
+        #
+        #         m.addConstr(self.k.sum() == 1)
+
 
         # m.setObjective(quicksum(i*self.b[i] for i in range(self.steps)),  GRB.MINIMIZE)
         #

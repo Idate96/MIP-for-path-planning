@@ -14,15 +14,28 @@ def entry():
 if __name__ == '__main__':
     entry()
 
-##create obstacle array
+# Inputs to the generation of the obstacles
 obstacles = []
 min_size = 1
 max_size = 2
 area_size = 20
 v_max = 10
 f_max = 10
-num_obs = 5
+num_obs = 1
 i = 0
+
+# Inputs to the generation of the vehicles
+vehicles = []
+num_vehicles = 2
+vehicle_mass = 1
+T = 30
+dt = 0.1
+steps = int(T/dt)
+wp = True
+n_way_points = 1
+
+# Generate the obstacles
+
 while i<num_obs:
     intercept = False
     x = obstacle(min_size,max_size,area_size)
@@ -38,15 +51,7 @@ while i<num_obs:
     obstacles[i].draw()
     i+=1
 
-##create vehicles
-vehicles = []
-num_vehicles = 3
-vehicle_mass = 1
-i = 0
-T = 30
-dt = 0.1
-steps = int(T/dt)
-
+# Create initial and final positions
 x0 = []; y0 = []
 x_fin = []; y_fin = []
 for i in range(num_vehicles):
@@ -55,19 +60,36 @@ for i in range(num_vehicles):
     x_fin.append(rand.random() * area_size)
     y_fin.append(rand.random() * area_size)
 
-#initialize model
+x_wp = []; y_wp = []
+if wp:
+    for i in range(num_vehicles):
+        x_dummy = []; y_dummy = []
+        for j in range(n_way_points):
+            x_dummy.append(rand.random() * area_size)
+            y_dummy.append(rand.random() * area_size)
+            x_dummy.append(area_size/2)
+            y_dummy.append(20)
+
+        x_wp.append(x_dummy)
+        y_wp.append(y_dummy)
+
+
+# Initialize model
 m = Model("ppl")
+
+# Create vehicles
 i=0
 while i<num_vehicles:
-    vehicles.append(Vehicle(vehicle_mass,dt,T,x0[i],y0[i],i,obstacles,m,v_max,f_max,area_size, x_fin[i],y_fin[i]))
+    vehicles.append(Vehicle(vehicle_mass,dt,T,x0[i],y0[i],i,obstacles,m,v_max,f_max,area_size, x_fin[i],y_fin[i], wp, x_wp[i], y_wp[i]))
     i+=1
 
-#add constraints
+# Add constraints
 i = 0
 while i<num_vehicles:
     vehicles[i].constrain(m, vehicles)
     i+=1
 
+# Obtaining the objective function
 total = 0
 for veh in range(len(vehicles)):
     for i in range(steps):
@@ -76,11 +98,12 @@ for veh in range(len(vehicles)):
 
 m.setObjective(total, GRB.MINIMIZE)
 
+# Optimizing the model and obtaining the values of he parameters and the obejective function
 m.optimize()
 m.getVars()
 # Z = m.objVal
 
-# plot
+# Plotting the results
 i = 0
 while i<num_vehicles:
     for k in range(steps):
