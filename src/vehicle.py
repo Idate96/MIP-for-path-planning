@@ -1,7 +1,8 @@
 from gurobipy import *
-
+import numpy as np
 
 class Vehicle:
+    M = 8
     def __init__(self, mass: float, dt: float, T: float, x0: float, y0: float, id: int, obstacles, m, v_max, f_max, area_size, x_fin: float, y_fin: float, wp, x_wp=None, y_wp=None):
         self.steps = int(T/dt)        # number of time steps
         self.id = id                  # vehicle id
@@ -16,6 +17,8 @@ class Vehicle:
         self.wp = wp                  # switch of waypoints
         self.x_wp = x_wp              # x-coordinate of waypoints
         self.y_wp = y_wp              # y-coordinate of waypoints
+        self.f_max = f_max            # max force magnitude to be applied
+        self.v_max = v_max            # max allowed velocity
 
         # Add variable arrays, length = amount of steps
         self.x = m.addVars(self.steps, lb=0, ub=area_size)     # x-ccordinate at each time step
@@ -24,6 +27,7 @@ class Vehicle:
         self.vy = m.addVars(self.steps, lb=-v_max, ub=v_max)   # velocity y-component at each time step
         self.fx = m.addVars(self.steps, lb=-f_max, ub=f_max)   # acceleration x-component at each time step
         self.fy = m.addVars(self.steps, lb=-f_max, ub=f_max)   # acceleration y-component at each time step
+        self.fm = m.addVars(self.steps, lb=0,ub=f_max)
 
     def constrain(self, m, vehicles):
         # Add constrain to each variable in the respective array
@@ -37,7 +41,12 @@ class Vehicle:
         m.addConstr(self.vx[0] == 0)
         m.addConstr(self.vy[0] == 0)
 
-        m.addConstrs(((self.vx[i]*self.vx[i]+self.vy[i]*self.vy[i]) <= self.v_max*self.v_max for i in range(self.steps-1)))
+        for m_small in range(1,self.M+1):
+            m.addConstrs((self.fx[i] * np.cos(2*np.pi * m_small / self.M) + self.fy[i] * np.sin(2*np.pi*m_small/self.M) <= self.fm[i] for i in range(self.steps)), name=("fm_cons_" + str(m_small)) )
+        for m_small in range(1,self.M+1):
+            m.addConstrs((self.vx[i] * np.cos(2*np.pi * m_small / self.M) + self.vy[i] * np.sin(2*np.pi*m_small/self.M) <= self.v_max for i in range(self.steps)), name=("vm_cons_" + str(m_small)) )
+        for m_small in range(1,self.M+1):
+            m.addConstrs((self.fx[i] * np.cos(2*np.pi * m_small / self.M) + self.fy[i] * np.sin(2*np.pi*m_small/self.M) <= self.f_max for i in range(self.steps)), name=("vm_cons_" + str(m_small)) )
 
         # Initial position constraint
         m.addConstr(self.x[0] == self.x0)
@@ -50,16 +59,10 @@ class Vehicle:
 
             c = m.addVars(4, self.steps, lb=0, vtype=GRB.BINARY)
 
-            # Obstacle dimensions
-            xmin = obs.x-obs.size
-            xmax = obs.x+obs.size
-            ymin = obs.y-obs.size
-            ymax = obs.y+obs.size
-
-            m.addConstrs((self.x[i] - xmax >= d_obs-R*c[0, i] for i in range(self.steps-1)))
-            m.addConstrs((-self.x[i] + xmin >= d_obs-R*c[1, i] for i in range(self.steps-1)))
-            m.addConstrs((self.y[i] - ymax >= d_obs-R*c[2, i] for i in range(self.steps-1)))
-            m.addConstrs((-self.y[i] + ymin >= d_obs-R*c[3, i] for i in range(self.steps-1)))
+            m.addConstrs((self.x[i] - obs.x_max >= d_obs-R*c[0, i] for i in range(self.steps-1)))
+            m.addConstrs((-self.x[i] + obs.x_min >= d_obs-R*c[1, i] for i in range(self.steps-1)))
+            m.addConstrs((self.y[i] - obs.y_max >= d_obs-R*c[2, i] for i in range(self.steps-1)))
+            m.addConstrs((-self.y[i] + obs.y_min >= d_obs-R*c[3, i] for i in range(self.steps-1)))
 
             m.addConstrs((c[0, i] + c[1, i] + c[2, i] + c[3, i] <= 3 for i in range(self.steps-1)))
 

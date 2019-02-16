@@ -1,27 +1,17 @@
 import random 
 import matplotlib.pyplot as plt
 
-
-class Obstacle:
-    def __init__(self, min_size, max_size, area_size):
-        self.size = random.random()*(max_size-min_size)+min_size    # obstacle square dimension
-        self.x = random.random()*(area_size-2*self.size)+self.size  # x-coordinate of center
-        self.y = random.random()*(area_size-2*self.size)+self.size  # y-coordinate of center
-
+class obstacle:
+    def __init__(self,x_min,x_max,y_min,y_max):
+        self.x_min = x_min
+        self.x_max = x_max
+        self.y_min = y_min
+        self.y_max = y_max
     def draw(self):
-        # Plot the square obstacle
-        plt.plot([self.x-self.size, self.x+self.size], [self.y-self.size, self.y-self.size], color='red')
-        plt.plot([self.x-self.size, self.x+self.size], [self.y+self.size, self.y+self.size], color='red')
-        plt.plot([self.x-self.size, self.x-self.size], [self.y+self.size, self.y-self.size], color='red')
-        plt.plot([self.x+self.size, self.x+self.size], [self.y+self.size, self.y-self.size], color='red')
-
-    def intersect(self,other):
-        # Check whether two obstacles intersect each other
-        return not(self.x+self.size < other.x-other.size or self.x-self.size > other.x+other.size or self.y+self.size < other.y-other.size or self.y-self.size > other.y+other.size)
-
-
-
-
-
-
-
+        ##plot the square obstacle
+        #ca = plt.gca()
+        #ca.add_patch(Rectangle(((self.x-self.size),(self.y-self.size)),self.size, self.size))
+        plt.plot([self.x_min,self.x_max],[self.y_max,self.y_max],color='black')
+        plt.plot([self.x_min,self.x_max],[self.y_min,self.y_min],color='black')
+        plt.plot([self.x_min,self.x_min],[self.y_min,self.y_max],color='black')
+        plt.plot([self.x_max,self.x_max],[self.y_max,self.y_min],color='black')
