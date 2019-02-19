@@ -2,7 +2,7 @@ from gurobipy import *
 import numpy as np
 
 class Vehicle:
-    M = 8
+    M = 75
     def __init__(self, mass: float, dt: float, T: float, x0: float, y0: float, id: int, obstacles, m, v_max, f_max, area_size, x_fin: float, y_fin: float, wp, x_wp=None, y_wp=None):
         self.steps = int(T/dt)        # number of time steps
         self.id = id                  # vehicle id
@@ -21,15 +21,15 @@ class Vehicle:
         self.v_max = v_max            # max allowed velocity
 
         # Add variable arrays, length = amount of steps
-        self.x = m.addVars(self.steps, lb=0, ub=area_size)     # x-ccordinate at each time step
-        self.y = m.addVars(self.steps, lb=0, ub=area_size)     # y-coordinate at each time step
+        self.x = m.addVars(self.steps, lb=-area_size, ub=area_size)     # x-ccordinate at each time step
+        self.y = m.addVars(self.steps, lb=-area_size, ub=area_size)     # y-coordinate at each time step
         self.vx = m.addVars(self.steps, lb=-v_max, ub=v_max)   # velocity x-component at each time step
         self.vy = m.addVars(self.steps, lb=-v_max, ub=v_max)   # velocity y-component at each time step
         self.fx = m.addVars(self.steps, lb=-f_max, ub=f_max)   # acceleration x-component at each time step
         self.fy = m.addVars(self.steps, lb=-f_max, ub=f_max)   # acceleration y-component at each time step
-        self.fm = m.addVars(self.steps, lb=0,ub=f_max)
+        self.fm = m.addVars(self.steps, lb=0, ub=f_max)
 
-    def constrain(self, m, vehicles):
+    def constrain(self, m, vehicles, vx_init, vy_init):
         # Add constrain to each variable in the respective array
         # Step position and velocity constraints
         m.addConstrs((self.x[i+1] == (self.x[i] + self.dt*self.vx[i]) for i in range(self.steps-1)))
@@ -38,9 +38,10 @@ class Vehicle:
         m.addConstrs((self.vy[i+1] == (self.vy[i] + self.fy[i]*self.dt/self.m) for i in range(self.steps-1)))
 
         # Initial velocity constraint
-        m.addConstr(self.vx[0] == 0)
-        m.addConstr(self.vy[0] == 0)
+        m.addConstr(self.vx[0] == vx_init)
+        m.addConstr(self.vy[0] == vy_init)
 
+        # Maximum velocity constrains making use of the sine and cosines
         for m_small in range(1,self.M+1):
             m.addConstrs((self.fx[i] * np.cos(2*np.pi * m_small / self.M) + self.fy[i] * np.sin(2*np.pi*m_small/self.M) <= self.fm[i] for i in range(self.steps)), name=("fm_cons_" + str(m_small)) )
         for m_small in range(1,self.M+1):
@@ -53,8 +54,8 @@ class Vehicle:
         m.addConstr(self.y[0] == self.y0)
 
         # Obstacle constraints
-        R = 100000                  # high value factor
-        d_obs = 1                   # minimum distance from obstacle required
+        R = 100000                    # high value factor
+        d_obs = 0.1                   # minimum distance from obstacle required
         for obs in self.obstacles:
 
             c = m.addVars(4, self.steps, lb=0, vtype=GRB.BINARY)
@@ -67,7 +68,7 @@ class Vehicle:
             m.addConstrs((c[0, i] + c[1, i] + c[2, i] + c[3, i] <= 3 for i in range(self.steps-1)))
 
         # Vehicle collision constraints
-        d_veh = 1
+        d_veh = 0.6
         new_vehicles = vehicles[0:self.id]+vehicles[self.id+1:len(vehicles)]  # list of vehicles excluding current object
         for veh in new_vehicles:
 
