@@ -3,6 +3,7 @@ from vehicle import Vehicle
 from obstacle import Obstacle
 import matplotlib.pyplot as plt
 import numpy as np
+from math import *
 
 if __name__ == '__main__':
     # Inputs to the generation of the obstacles
@@ -13,7 +14,8 @@ if __name__ == '__main__':
     # Inputs to the generation of the vehicles
     vehicle_mass = 5        # mass of the vehicles
     v_max = 0.225           # maximum velocity of the vehicle
-    paper = 9               # figure from the original paper that wants to be verified
+    paper = 10               # figure from the original paper that wants to be verified
+    performance_graphs = True  # include the velocity and acceleration performance of the vehicles
 
     # Figure 7 in the paper: 3 vehicles
     if paper == 7:
@@ -180,4 +182,54 @@ if __name__ == '__main__':
     plt.xlim([-area_size, area_size])   # limit the plot space
     plt.ylim([-area_size, area_size])   # limit the plot space
     plt.savefig(name)                   # save the resulting plot
+    # plt.show()
+
+    if performance_graphs:  # Plot the velocity and acceleration of the vehicles
+        # Plot the velocity
+        fig = plt.subplot(2,1,1)
+        plt.xlabel('Time steps [-]')
+        plt.ylabel("Velocity [m/s]")
+        plt.title("Velocity per time step")
+        v_coords_x = []
+        v_coords_y = []
+        V_coords = []
+        for j in range(len(vehicles)):
+            for i in range(len(vehicles[0].vx)):
+                v_coords_x.append(vehicles[j].vx[i].x)
+                v_coords_y.append(vehicles[j].vy[i].x)
+                V_coords.append(sqrt(vehicles[j].vy[i].x ** 2 + vehicles[j].vx[i].x ** 2))
+            n_steps = len(V_coords)
+            fig.plot(range(len(V_coords)), V_coords, label= "Vehicle " + str(j))
+            v_coords_x = []
+            v_coords_y = []
+            V_coords = []
+        # Plot the maximum velocity
+        fig.plot(range(n_steps), [vehicles[0].v_max]*n_steps, color = 'black', label="Maximum velocity")
+        plt.legend()
+        plt.grid(True)
+
+        # Plot the acceleration
+        fig2 = plt.subplot(2, 1, 2)
+        plt.xlabel('Time steps [-]')
+        plt.ylabel("Force [N]")
+        plt.title("Acceleration per time step")
+        f_coords_x = []
+        f_coords_y = []
+        f_coords = []
+        for j in range(len(vehicles)):
+            for i in range(len(vehicles[0].vx)):
+                f_coords_x.append(vehicles[j].fx[i].x)
+                f_coords_y.append(vehicles[j].fy[i].x)
+                f_coords.append(sqrt(vehicles[j].fy[i].x ** 2 + vehicles[j].fx[i].x ** 2))
+
+            plt.plot(range(n_steps), f_coords, label= "Vehicle " + str(j))
+            f_coords_x = []
+            f_coords_y = []
+            f_coords = []
+        # Plot the maximum force
+        fig2.plot(range(n_steps), [vehicles[0].f_max] * n_steps, color='black', label="Maximum force")
+        plt.legend()
+        plt.grid(True)
+        plt.tight_layout()  # Make sure the titles and labels are visible
+        plt.savefig("Performance_" + name)  # save the resulting plot
     plt.show()
