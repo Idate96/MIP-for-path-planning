@@ -45,9 +45,9 @@ class Vehicle:
         for m_small in range(1,self.M+1):
             m.addConstrs((self.fx[i] * np.cos(2*np.pi * m_small / self.M) + self.fy[i] * np.sin(2*np.pi*m_small/self.M) <= self.fm[i] for i in range(self.steps)), name=("fm_cons_" + str(m_small)) )
         for m_small in range(1,self.M+1):
-            m.addConstrs((self.vx[i] * np.cos(2*np.pi * m_small / self.M) + self.vy[i] * np.sin(2*np.pi*m_small/self.M) <= self.v_max for i in range(self.steps)), name=("vm_cons_" + str(m_small)) )
+            m.addConstrs((self.vx[i] * np.cos(2*np.pi * m_small / self.M) + self.vy[i] * np.sin(2*np.pi*m_small/self.M) <= self.v_max for i in range(self.steps)), name=("vmax_cons_" + str(m_small)) )
         for m_small in range(1,self.M+1):
-            m.addConstrs((self.fx[i] * np.cos(2*np.pi * m_small / self.M) + self.fy[i] * np.sin(2*np.pi*m_small/self.M) <= self.f_max for i in range(self.steps)), name=("vm_cons_" + str(m_small)) )
+            m.addConstrs((self.fx[i] * np.cos(2*np.pi * m_small / self.M) + self.fy[i] * np.sin(2*np.pi*m_small/self.M) <= self.f_max for i in range(self.steps)), name=("fmax_cons_" + str(m_small)) )
 
         # Initial position constraint
         m.addConstr(self.x[0] == self.x0)
