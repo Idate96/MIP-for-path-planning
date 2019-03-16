@@ -11,7 +11,7 @@ if __name__ == '__main__':
     max_size = 2         # maximum size of the obstacle
 
 
-    # Inputs to the generation of the vehicles
+    ###### Inputs to the generation of the vehicles ######
     vehicle_mass = 5        # mass of the vehicles
     v_max = 0.225           # maximum velocity of the vehicle
     paper = 9               # figure from the original paper that wants to be verified
