@@ -185,6 +185,8 @@ if __name__ == '__main__':
     # plt.show()
 
     if performance_graphs:  # Plot the velocity and acceleration of the vehicles
+        line_styles = ["--", ":", "-.", '-', '-']
+        marker_styles = ['None', 'None', 'None', 'x', 'None']
         # Plot the velocity
         fig = plt.subplot(2,1,1)
         plt.xlabel('Time steps [-]')
@@ -199,12 +201,12 @@ if __name__ == '__main__':
                 v_coords_y.append(vehicles[j].vy[i].x)
                 V_coords.append(sqrt(vehicles[j].vy[i].x ** 2 + vehicles[j].vx[i].x ** 2))
             n_steps = len(V_coords)
-            fig.plot(range(len(V_coords)), V_coords, label= "Vehicle " + str(j))
+            fig.plot(range(len(V_coords)), V_coords, color = 'black', label= "Vehicle " + str(j+1), linestyle = line_styles[j], marker = marker_styles[j])
             v_coords_x = []
             v_coords_y = []
             V_coords = []
         # Plot the maximum velocity
-        fig.plot(range(n_steps), [vehicles[0].v_max]*n_steps, color = 'black', label="Maximum velocity")
+        fig.plot(range(n_steps), [vehicles[0].v_max]*n_steps, color = 'black', label="Maximum velocity = " + str(vehicles[0].v_max) + ' [m/s]', linestyle = line_styles[4], marker = marker_styles[4])
         plt.legend()
         plt.grid(True)
 
@@ -222,12 +224,12 @@ if __name__ == '__main__':
                 f_coords_y.append(vehicles[j].fy[i].x)
                 f_coords.append(sqrt(vehicles[j].fy[i].x ** 2 + vehicles[j].fx[i].x ** 2))
 
-            plt.plot(range(n_steps), f_coords, label= "Vehicle " + str(j))
+            plt.plot(range(n_steps), f_coords, color='black', label= "Vehicle " + str(j+1), linestyle = line_styles[j], marker = marker_styles[j])
             f_coords_x = []
             f_coords_y = []
             f_coords = []
         # Plot the maximum force
-        fig2.plot(range(n_steps), [vehicles[0].f_max] * n_steps, color='black', label="Maximum force")
+        fig2.plot(range(n_steps), [vehicles[0].f_max] * n_steps, color='black', label="Maximum force = " + str(vehicles[0].f_max) + ' [N]', linestyle = line_styles[4], marker = marker_styles[4])
         plt.legend()
         plt.grid(True)
         plt.tight_layout()  # Make sure the titles and labels are visible
