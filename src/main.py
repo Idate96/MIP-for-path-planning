@@ -13,7 +13,7 @@ if __name__ == '__main__':
     # Inputs to the generation of the vehicles
     vehicle_mass = 5        # mass of the vehicles
     v_max = 0.225           # maximum velocity of the vehicle
-    paper = 8               # figure from the original paper that wants to be verified
+    paper = 9               # figure from the original paper that wants to be verified
 
     # Figure 7 in the paper: 3 vehicles
     if paper == 7:
@@ -52,7 +52,7 @@ if __name__ == '__main__':
                    (veh_coords[2][3] - veh_coords[2][1]) * (facs - 0.04),
                    (veh_coords[3][3] - veh_coords[3][1]) * (facs)]  # initial y-component of velocity
         wp_coords = [[], [], []]    # array containing all waypoint in [x_wp,y_wp] format
-        name = 'four aircraft.png'  # name of the figure to be saved
+        name = 'four_aircraft.png'  # name of the figure to be saved
 
 
     # Figure 9 in the paper: waypoints without obstacle
@@ -153,7 +153,7 @@ if __name__ == '__main__':
         z = 0
         if paper == 7:
             # Plot a bold point at the 18th point as done in the paper
-            plt.scatter(vehicles[i].x[18].x, vehicles[i].y[18].x, facecolor = 'blue', edgecolor = 'blue')
+            plt.scatter(vehicles[i].x[18].x, vehicles[i].y[18].x, facecolor = 'black', edgecolor = 'black')
             # Plot dashed lines connecting initial and final points for all vehicles
             plt.plot([veh_coords[i][0], veh_coords[i][2]], [veh_coords[i][1], veh_coords[i][3]], 'k--', alpha = 0.5)
         elif paper == 8:
@@ -172,10 +172,10 @@ if __name__ == '__main__':
             coords[j, :] = [vehicles[i].x[j].x,vehicles[i].y[j].x]
         if wp:                                # plotting the location of the waypoints
             for jj in range(len(x_wp[i])):
-                plt.plot(x_wp[i][jj], y_wp[i][jj], '*', color='b')
-        plt.scatter(coords[:,0], coords[:,1], facecolor = 'none', edgecolor = 'blue')  # plot the trajectories of the vehicles
-        plt.plot(vehicles[i].x_fin, vehicles[i].y_fin, '*', color='b')    # plot the final points star
-        plt.scatter(vehicles[i].x_fin, vehicles[i].y_fin, facecolor = 'none', edgecolor = 'blue')  # plot the final points circle
+                plt.plot(x_wp[i][jj], y_wp[i][jj], '*', color='k')
+        plt.scatter(coords[:,0], coords[:,1], facecolor = 'none', edgecolor = 'black')  # plot the trajectories of the vehicles
+        plt.plot(vehicles[i].x_fin, vehicles[i].y_fin, '*', color='k')    # plot the final points star
+        plt.scatter(vehicles[i].x_fin, vehicles[i].y_fin, facecolor = 'none', edgecolor = 'black')  # plot the final points circle
 
     plt.xlim([-area_size, area_size])   # limit the plot space
     plt.ylim([-area_size, area_size])   # limit the plot space
