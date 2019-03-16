@@ -14,8 +14,14 @@ if __name__ == '__main__':
     # Inputs to the generation of the vehicles
     vehicle_mass = 5        # mass of the vehicles
     v_max = 0.225           # maximum velocity of the vehicle
-    paper = 10               # figure from the original paper that wants to be verified
+    paper = 9               # figure from the original paper that wants to be verified
     performance_graphs = True  # include the velocity and acceleration performance of the vehicles
+    obj_acceleration = True  # when True the acceleration is taken into consideration in the objective function
+
+    if not obj_acceleration:
+        extra = 'acc_'
+    else:
+        extra = ''
 
     # Figure 7 in the paper: 3 vehicles
     if paper == 7:
@@ -140,7 +146,10 @@ if __name__ == '__main__':
     epsilon = 0.01
     for veh in range(len(vehicles)):
         for i in range(steps):
-            total += vehicles[veh].b[i] * i + vehicles[veh].fm[i]*epsilon
+            if obj_acceleration:
+                total += vehicles[veh].b[i] * i + vehicles[veh].fm[i]*epsilon  # Objective function with acceleration
+            else:
+                total += vehicles[veh].b[i] * i    # Objective function without acceleration
 
 
     m.setObjective(total, GRB.MINIMIZE)
@@ -181,7 +190,7 @@ if __name__ == '__main__':
 
     plt.xlim([-area_size, area_size])   # limit the plot space
     plt.ylim([-area_size, area_size])   # limit the plot space
-    plt.savefig(name)                   # save the resulting plot
+    plt.savefig(extra + name)                   # save the resulting plot
     # plt.show()
 
     if performance_graphs:  # Plot the velocity and acceleration of the vehicles
@@ -233,5 +242,5 @@ if __name__ == '__main__':
         plt.legend()
         plt.grid(True)
         plt.tight_layout()  # Make sure the titles and labels are visible
-        plt.savefig("Performance_" + name)  # save the resulting plot
+        plt.savefig(extra + "Performance_" + name)  # save the resulting plot
     plt.show()
