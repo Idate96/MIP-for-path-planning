@@ -18,7 +18,7 @@ if __name__ == '__main__':
     performance_graphs = True  # include the velocity and acceleration performance of the vehicles
     obj_acceleration = True  # when True the acceleration is taken into consideration in the objective function
 
-    if not obj_acceleration:
+    if not obj_acceleration:  # if the acceleration is not included in the objective function, 'acc' is added to the file name
         extra = 'acc_'
     else:
         extra = ''
@@ -40,6 +40,7 @@ if __name__ == '__main__':
                       [1, 1.732, -1, -1.732]]  # array containing all vehicles in [x_0,y_0,x_fin,y_fin] format
         wp_coords = [[], [], []]               # array containing all waypoint in [x_wp,y_wp] format for each vehicle
         name = 'multi-vehicles.png'            # name of the figure to be saved
+        folder = 'multi-vehicles\\'            # folder name
 
     # Figure 8 in the paper: 4 vehicles
     if paper == 8:
@@ -61,6 +62,7 @@ if __name__ == '__main__':
                    (veh_coords[3][3] - veh_coords[3][1]) * (facs)]  # initial y-component of velocity
         wp_coords = [[], [], []]    # array containing all waypoint in [x_wp,y_wp] format
         name = 'four_aircraft.png'  # name of the figure to be saved
+        folder = 'four_aircraft\\'  # folder name
 
 
     # Figure 9 in the paper: waypoints without obstacle
@@ -76,6 +78,7 @@ if __name__ == '__main__':
         veh_coords = [[5, 5, 0, -2]]     # array containing all vehicles in [x_0,y_0,x_fin,y_fin] format
         wp_coords = [[[-0.7, 6], [-5, 4]]]  # array containing all waypoint in [x_wp,y_wp] format
         name = 'waypoints.png'              # name of the figure to be saved
+        folder = 'waypoints\\'              # folder name
 
     # Figure 10 in the paper: waypoint with obstacle
     if paper == 10:
@@ -90,6 +93,7 @@ if __name__ == '__main__':
         veh_coords = [[5, 5, -0.7, 6]]    # array containing all vehicles in [x_0,y_0,x_fin,y_fin] format
         wp_coords = [[[0, -2], [-5, 4]]]  # array containing all waypoint in [x_wp,y_wp] format
         name = 'waypoints_obs.png'        # name of the figure to be saved
+        folder = 'waypoints_obs\\'        # folder name
 
     steps = int(T / dt)                             # number of steps
     obstacles = []                                  # list which will contain all obstacles
@@ -190,7 +194,7 @@ if __name__ == '__main__':
 
     plt.xlim([-area_size, area_size])   # limit the plot space
     plt.ylim([-area_size, area_size])   # limit the plot space
-    plt.savefig(extra + name)                   # save the resulting plot
+    plt.savefig(folder + extra + name)                   # save the resulting plot
     # plt.show()
 
     if performance_graphs:  # Plot the velocity and acceleration of the vehicles
@@ -242,5 +246,5 @@ if __name__ == '__main__':
         plt.legend()
         plt.grid(True)
         plt.tight_layout()  # Make sure the titles and labels are visible
-        plt.savefig(extra + "Performance_" + name)  # save the resulting plot
+        plt.savefig(folder + extra + "Performance_" + name)  # save the resulting plot
     plt.show()
