@@ -69,7 +69,6 @@ class Vehicle:
     def constrain_obstacles(self, obstacles, d_obs):
         # Obstacle constraints
         R = 100000                    # high value factor
-        d_obs = 0                   # minimum distance from obstacle required
         for obs in obstacles:
 
             c = self.model.addVars(4, self.steps, lb=0, vtype=GRB.BINARY)

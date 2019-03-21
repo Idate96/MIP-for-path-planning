@@ -19,27 +19,27 @@ if __name__ == '__main__':
         wp = False       # switch for use of waypoints. True: waypoints can be used. False: function deactivated
 
 
-        vx_init = [0,0]  # initial x-component of velocity
-        vy_init = [0,0]      # initial y-component of velocity
-        f_max = [0.294, 0.236]                            # maximum force experienced by a vehicle
-        T = 70                                 # maximum time of travel
-        dt = 2                               # time step size
-        d_obs = 0
-        M = 24
+        vx_init = [0,0]             # initial x-component of velocity
+        vy_init = [0,0]             # initial y-component of velocity
+        f_max = [0.294, 0.236]      # maximum force experienced by a vehicle
+        T = 70                      # maximum time of travel
+        dt = 2                      # time step size
+        d_obs = 0                   # minimum distance required from obstacle
+        M = 24                      # number of constraints in order to approximate the force and velocity magnitudes
         
         obs_coords = [[1,2,3.5,6],
                       [5,6,1,5],
-                      [7,8,3,9]]   
-                                              # array containing all obstacles in [x_min,x_max,y_min,y_max] format
-        veh_coords = [[10,5,0,4],
-                     [10,5,0,4]] 
-        wp_coords = [[], [], []]              # array containing all waypoint in [x_wp,y_wp] format for each vehicle
-        name = 'turn_rate.png'            # name of the figure to be saved
-        folder = 'results/turn_rate/'            # folder name
+                      [7,8,3,9]]    # array containing all obstacles in [x_min,x_max,y_min,y_max] format
 
-        constrain_multiple_vehicles = False
-        constrain_waypoints = False
-        constrain_obstacles = True
+        veh_coords = [[10,5,0,4],
+                     [10,5,0,4]]    # array containing the initial and final position of all the vehicles in [x_0,y_0,x_fin,y_fin] format
+        wp_coords = [[], [], []]    # array containing all waypoint in [x_wp,y_wp] format for each vehicle
+        name = 'turn_rate.png'      # name of the figure to be saved
+        folder = 'results/turn_rate/'  # folder name
+
+        constrain_multiple_vehicles = False   # True: add contraints related to multiple vehicle, False: do not add
+        constrain_waypoints = False           # True: add contraints related to waypoints, False: do not add
+        constrain_obstacles = True            # True: add contraints related to avoiding obstacles, False: do not add
 
     # Figure 13 in the paper: 3 vehicles
     if args.figureNumber == 1:
@@ -50,33 +50,33 @@ if __name__ == '__main__':
 
         vx_init = [0.17246, -diag_x, -diag_x]  # initial x-component of velocity
         vy_init = [0.03, diag_y, -diag_y]      # initial y-component of velocity
-        f_max = [0.2]                            # maximum force experienced by a vehicle
+        f_max = [0.2]                          # maximum force experienced by a vehicle
         T = 30                                 # maximum time of travel
         dt = 0.5                               # time step size
-        d_obs = 0.1
-        M = 75
+        d_obs = 0.1                            # minimum distance required from obstacle
+        M = 75                                 # number of constraints in order to approximate the force and velocity magnitudes
                                      
         obs_coords = []                        # array containing all obstacles in [x_min,x_max,y_min,y_max] format
         veh_coords = [[-2, 0, 2, 0], [1, -1.732, -1, 1.732],
                       [1, 1.732, -1, -1.732]]  # array containing all vehicles in [x_0,y_0,x_fin,y_fin] format
         wp_coords = [[], [], []]               # array containing all waypoint in [x_wp,y_wp] format for each vehicle
         name = 'multi-vehicles.png'            # name of the figure to be saved
-        folder = 'results/multi_vehicles/'            # folder name
+        folder = 'results/multi_vehicles/'     # folder name
 
-        constrain_multiple_vehicles = True
-        constrain_waypoints = False
-        constrain_obstacles = False
+        constrain_multiple_vehicles = True   # True: add contraints related to multiple vehicle, False: do not add
+        constrain_waypoints = False          # True: add contraints related to waypoints, False: do not add
+        constrain_obstacles = False          # True: add contraints related to avoiding obstacles, False: do not add
 
     # Figure 15 in the paper: 4 vehicles
     if args.figureNumber == 2:
         area_size = 4            # window size
         wp = False               # switch for use of waypoints. True: waypoints can be used. False: function deactivated
 
-        f_max = [0.29]             # maximum force experienced by a vehicle
+        f_max = [0.29]           # maximum force experienced by a vehicle
         T = 30                   # maximum time of travel
         dt = 1                   # time step size
-        d_obs = 0.1
-        M = 75
+        d_obs = 0.1              # minimum distance required from obstacle
+        M = 75                   # number of constraints in order to approximate the force and velocity magnitudes
 
         obs_coords = []          # array containing all obstacles in [x_min,x_max,y_min,y_max] format
         veh_coords = [[-2, -4, 2, 0], [2, -2, 0, 0],
@@ -92,9 +92,9 @@ if __name__ == '__main__':
         name = 'four_aircraft.png'  # name of the figure to be saved
         folder = 'results/four_aircraft/'  # folder name
 
-        constrain_multiple_vehicles = True
-        constrain_waypoints = False
-        constrain_obstacles = False
+        constrain_multiple_vehicles = True   # True: add contraints related to multiple vehicle, False: do not add
+        constrain_waypoints = False          # True: add contraints related to waypoints, False: do not add
+        constrain_obstacles = False          # True: add contraints related to avoiding obstacles, False: do not add
 
 
     # Figure 17 in the paper: waypoints without obstacle
@@ -103,21 +103,21 @@ if __name__ == '__main__':
         wp = True       # switch for use of waypoints. True: waypoints can be used. False: function deactivated
         vx_init = [0]   # initial x-component velocity
         vy_init = [0]   # initial y-component velocity
-        f_max = [0.2]     # maximum force experienced by a vehicle
+        f_max = [0.2]    # maximum force experienced by a vehicle
         T = 100         # maximum time of travel
         dt = 4          # time step size
-        d_obs = 0.1
-        M = 75
+        d_obs = 0.1     # minimum distance required from obstacle
+        M = 75          # number of constraints in order to approximate the force and velocity magnitudes
         
         obs_coords = []                  # array containing all obstacles in [x_min,x_max,y_min,y_max] format
         veh_coords = [[5, 5, 0, -2]]     # array containing all vehicles in [x_0,y_0,x_fin,y_fin] format
         wp_coords = [[[-0.7, 6], [-5, 4]]]  # array containing all waypoint in [x_wp,y_wp] format
         name = 'waypoints.png'              # name of the figure to be saved
-        folder = 'results/waypoints/'              # folder name
+        folder = 'results/waypoints/'       # folder name
 
-        constrain_multiple_vehicles = False
-        constrain_waypoints = True
-        constrain_obstacles = False
+        constrain_multiple_vehicles = False   # True: add contraints related to multiple vehicle, False: do not add
+        constrain_waypoints = True            # True: add contraints related to waypoints, False: do not add
+        constrain_obstacles = False           # True: add contraints related to avoiding obstacles, False: do not add
 
     # Figure 19 in the paper: waypoint with obstacle
     if args.figureNumber == 4:
@@ -125,11 +125,11 @@ if __name__ == '__main__':
         wp = True           # switch for use of waypoints. True: waypoints can be used. False: function deactivated
         vx_init = [-0.19]   # initial x-component velocity
         vy_init = [-0.1]    # initial y-component velocity
-        f_max = [0.15]        # maximum force experienced by a vehicle
+        f_max = [0.15]      # maximum force experienced by a vehicle
         T = 200             # maximum time of travel
         dt = 4.             # time step size
-        d_obs = 0.1
-        M = 75
+        d_obs = 0.1         # minimum distance required from obstacle
+        M = 75              # number of constraints in order to approximate the force and velocity magnitudes
         
         obs_coords = [[0, 1.7, 0, 9]]     # array containing all obstacles in [x_min,x_max,y_min,y_max] format
         veh_coords = [[5, 5, -0.7, 6]]    # array containing all vehicles in [x_0,y_0,x_fin,y_fin] format
@@ -137,9 +137,9 @@ if __name__ == '__main__':
         name = 'waypoints_obs.png'        # name of the figure to be saved
         folder = 'results/waypoints_obs/'        # folder name
 
-        constrain_multiple_vehicles = False
-        constrain_waypoints = True
-        constrain_obstacles = True
+        constrain_multiple_vehicles = False   # True: add contraints related to multiple vehicle, False: do not add
+        constrain_waypoints = True            # True: add contraints related to waypoints, False: do not add
+        constrain_obstacles = True            # True: add contraints related to avoiding obstacles, False: do not add
 
     steps = int(T / dt)                             # number of steps
     obstacles = []                                  # list which will contain all obstacles
@@ -150,7 +150,6 @@ if __name__ == '__main__':
 
 
     # Create initial and final positions
-
     num_vehicles = len(veh_coords)
     x0 = []; y0 = []                                 # initial positions for all vehicles
     x_fin = []; y_fin = []                           # final positions for all vehicles
@@ -178,10 +177,10 @@ if __name__ == '__main__':
 
     
     ###### Inputs to the generation of the vehicles ######
-    vehicle_mass = 5        # mass of the vehicles
-    v_max = 0.225           # maximum velocity of the vehicle
+    vehicle_mass = 5           # mass of the vehicles
+    v_max = 0.225              # maximum velocity of the vehicle
     performance_graphs = True  # include the velocity and acceleration performance of the vehicles
-    obj_acceleration = True  # when True the acceleration is taken into consideration in the objective function
+    obj_acceleration = True    # when True the acceleration is taken into consideration in the objective function
 
     if not obj_acceleration:  # if the acceleration is not included in the objective function, 'acc' is added to the file name
         extra = 'acc_'
@@ -200,6 +199,7 @@ if __name__ == '__main__':
             vehicles.append(
                 Vehicle(vehicle_mass, dt, T, x0[i], y0[i], i, m, M, v_max, f_max[min(i, len(f_max)-1)], area_size, x_fin[i], y_fin[i],
                         wp))
+
     # Add constraints and add model secondary variables
     for i in range(num_vehicles):        
         vehicles[i].constrain_dynamics(vx_init[i], vy_init[i])
@@ -216,7 +216,7 @@ if __name__ == '__main__':
 
     # Obtaining the objective function
     total = 0                                # total number of time steps between all the vehicles (minimize)
-    epsilon = 0.001
+    epsilon = 0.001                          # effect of the force on the objective function
     for veh in range(len(vehicles)):
         for i in range(steps):
             if obj_acceleration:
@@ -246,6 +246,7 @@ if __name__ == '__main__':
         elif args.figureNumber == 3 or args.figureNumber == 4:
             # Plot arrow as shown in the paper
             plt.arrow(7.5, 5, -2, 0, length_includes_head=True, head_width=0.3)
+
         for k in range(steps):                 # obtaining time step at which vehicle reaches the final point
             Z = str(vehicles[i].b[k])
             if Z[-5] == "1":
@@ -276,11 +277,11 @@ if __name__ == '__main__':
         plt.ylim([0, area_size])   # limit the plot space
     
     plt.savefig(folder + extra + name)                   # save the resulting plot
-    # plt.show()
 
-    if performance_graphs:  # Plot the velocity and acceleration of the vehicles
+    if performance_graphs:  # Plot the velocity and acceleration of the vehicles of the different experiments
         line_styles = ["--", ":", "-.", '-', '-']
         marker_styles = ['None', 'None', 'None', 'x', 'None']
+
         # Plot the velocity
         fig = plt.subplot(2,1,1)
         plt.xlabel('Time steps [-]')
@@ -289,22 +290,23 @@ if __name__ == '__main__':
         v_coords_x = []
         v_coords_y = []
         V_coords = []
-        for j in range(len(vehicles)):
+        for j in range(len(vehicles)):                  # extract the velocity of each vehicle
             for i in range(len(vehicles[0].vx)):
-                v_coords_x.append(vehicles[j].vx[i].x)
-                v_coords_y.append(vehicles[j].vy[i].x)
-                V_coords.append(sqrt(vehicles[j].vy[i].x ** 2 + vehicles[j].vx[i].x ** 2))
+                v_coords_x.append(vehicles[j].vx[i].x)  # velocity in the x-direction
+                v_coords_y.append(vehicles[j].vy[i].x)  # velocity in the y-direction
+                V_coords.append(sqrt(vehicles[j].vy[i].x ** 2 + vehicles[j].vx[i].x ** 2))  # velocity magnitude
             n_steps = len(V_coords)
             fig.plot(range(len(V_coords)), V_coords, color = 'black', label= "Vehicle " + str(j+1), linestyle = line_styles[j], marker = marker_styles[j])
             v_coords_x = []
             v_coords_y = []
             V_coords = []
+
         # Plot the maximum velocity
         fig.plot(range(n_steps), [vehicles[0].v_max]*n_steps, color = 'black', label="Maximum velocity = " + str(vehicles[0].v_max) + ' [m/s]', linestyle = line_styles[4], marker = marker_styles[4])
         plt.legend()
         plt.grid(True)
 
-        # Plot the acceleration
+        # Plot the force
         fig2 = plt.subplot(2, 1, 2)
         plt.xlabel('Time steps [-]')
         plt.ylabel("Force [N]")
@@ -312,20 +314,22 @@ if __name__ == '__main__':
         f_coords_x = []
         f_coords_y = []
         f_coords = []
-        for j in range(len(vehicles)):
+        for j in range(len(vehicles)):                 # extract the forces applied to each vehicle
             for i in range(len(vehicles[0].vx)):
-                f_coords_x.append(vehicles[j].fx[i].x)
-                f_coords_y.append(vehicles[j].fy[i].x)
-                f_coords.append(sqrt(vehicles[j].fy[i].x ** 2 + vehicles[j].fx[i].x ** 2))
+                f_coords_x.append(vehicles[j].fx[i].x)  # force applied in the x-direction
+                f_coords_y.append(vehicles[j].fy[i].x)  # force applied  in the y-direction
+                f_coords.append(sqrt(vehicles[j].fy[i].x ** 2 + vehicles[j].fx[i].x ** 2))   # force magnitude
 
             plt.plot(range(n_steps), f_coords, color='black', label= "Vehicle " + str(j+1), linestyle = line_styles[j], marker = marker_styles[j])
             f_coords_x = []
             f_coords_y = []
             f_coords = []
+
         # Plot the maximum force
         fig2.plot(range(n_steps), [vehicles[0].f_max] * n_steps, color='black', label="Maximum force = " + str(vehicles[0].f_max) + ' [N]', linestyle = line_styles[4], marker = marker_styles[4])
         plt.legend()
         plt.grid(True)
-        plt.tight_layout()  # Make sure the titles and labels are visible
+        plt.tight_layout()                                   # Make sure the titles and labels are visible
         plt.savefig(folder + extra + "Performance_" + name)  # save the resulting plot
+
     plt.show()
