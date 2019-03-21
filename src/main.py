@@ -12,10 +12,10 @@ if __name__ == '__main__':
     parser.add_argument("figureNumber", metavar='figureNumber', type=int)
 
     args = parser.parse_args()
-    # Figure 7 in the paper: 3 vehicles
-
-    if args.figureNumber == 5:
-        area_size = 10   # window size
+    
+    # Figure 4 in the paper: 2 vehicles with different turn rates
+    if args.figureNumber == 0:
+        area_size = 10  # window size
         wp = False       # switch for use of waypoints. True: waypoints can be used. False: function deactivated
 
 
@@ -41,8 +41,8 @@ if __name__ == '__main__':
         constrain_waypoints = False           # True: add contraints related to waypoints, False: do not add
         constrain_obstacles = True            # True: add contraints related to avoiding obstacles, False: do not add
 
-
-    if args.figureNumber == 7:
+    # Figure 13 in the paper: 3 vehicles
+    if args.figureNumber == 1:
         area_size = 2.5  # window size
         wp = False       # switch for use of waypoints. True: waypoints can be used. False: function deactivated
         diag_x = 0.0857  # initial x-velocity component of the aircraft flying in a diagonal direction
@@ -67,8 +67,8 @@ if __name__ == '__main__':
         constrain_waypoints = False          # True: add contraints related to waypoints, False: do not add
         constrain_obstacles = False          # True: add contraints related to avoiding obstacles, False: do not add
 
-    # Figure 8 in the paper: 4 vehicles
-    if args.figureNumber == 8:
+    # Figure 15 in the paper: 4 vehicles
+    if args.figureNumber == 2:
         area_size = 4            # window size
         wp = False               # switch for use of waypoints. True: waypoints can be used. False: function deactivated
 
@@ -97,8 +97,8 @@ if __name__ == '__main__':
         constrain_obstacles = False          # True: add contraints related to avoiding obstacles, False: do not add
 
 
-    # Figure 9 in the paper: waypoints without obstacle
-    if args.figureNumber == 9:
+    # Figure 17 in the paper: waypoints without obstacle
+    if args.figureNumber == 3:
         area_size = 10  # window size
         wp = True       # switch for use of waypoints. True: waypoints can be used. False: function deactivated
         vx_init = [0]   # initial x-component velocity
@@ -119,8 +119,8 @@ if __name__ == '__main__':
         constrain_waypoints = True            # True: add contraints related to waypoints, False: do not add
         constrain_obstacles = False           # True: add contraints related to avoiding obstacles, False: do not add
 
-   # Figure 10 in the paper: waypoint with obstacle
-    if args.figureNumber == 10:
+    # Figure 19 in the paper: waypoint with obstacle
+    if args.figureNumber == 4:
         area_size = 10      # window size
         wp = True           # switch for use of waypoints. True: waypoints can be used. False: function deactivated
         vx_init = [-0.19]   # initial x-component velocity
@@ -235,15 +235,15 @@ if __name__ == '__main__':
 
     for i in range(num_vehicles):
         z = 0
-        if args.figureNumber == 7:
+        if args.figureNumber == 1:
             # Plot a bold point at the 18th point as done in the paper
             plt.scatter(vehicles[i].x[18].x, vehicles[i].y[18].x, facecolor = 'black', edgecolor = 'black')
             # Plot dashed lines connecting initial and final points for all vehicles
             plt.plot([veh_coords[i][0], veh_coords[i][2]], [veh_coords[i][1], veh_coords[i][3]], 'k--', alpha = 0.5)
-        elif args.figureNumber == 8:
+        elif args.figureNumber == 2:
             # Plot dashed lines connecting initial and final points for all vehicles
             plt.plot([veh_coords[i][0], veh_coords[i][2]], [veh_coords[i][1], veh_coords[i][3]], 'k--', alpha=0.5)
-        elif args.figureNumber == 9 or args.figureNumber == 10:
+        elif args.figureNumber == 3 or args.figureNumber == 4:
             # Plot arrow as shown in the paper
             plt.arrow(7.5, 5, -2, 0, length_includes_head=True, head_width=0.3)
 
@@ -258,14 +258,21 @@ if __name__ == '__main__':
         if wp:                                # plotting the location of the waypoints
             for jj in range(len(x_wp[i])):
                 plt.plot(x_wp[i][jj], y_wp[i][jj], '*', color='k')
-
-        plt.scatter(coords[:,0], coords[:,1], facecolor = 'none', edgecolor = 'black')  # plot the trajectories of the vehicles
+        
+        if args.figureNumber == 0:
+            labels = ['Turn rate 15 $\degree$/s', 'Turn rate 12 $\degree$/s']
+            shape = ['o', '^']
+            plt.plot(coords[:,0], coords[:,1], shape[i], fillstyle='none',color='black',label=labels[i])
+            plt.legend()
+        else:
+            plt.scatter(coords[:,0], coords[:,1], facecolor = 'none', edgecolor = 'black')  # plot the trajectories of the vehicles
+        
         plt.plot(vehicles[i].x_fin, vehicles[i].y_fin, '*', color='k')    # plot the final points star
         plt.scatter(vehicles[i].x_fin, vehicles[i].y_fin, facecolor = 'none', edgecolor = 'black')  # plot the final points circle
 
     plt.xlim([-area_size, area_size])   # limit the plot space
     plt.ylim([-area_size, area_size])   # limit the plot space
-    if args.figureNumber == 5:
+    if args.figureNumber == 0:
         plt.xlim([0, area_size])   # limit the plot space
         plt.ylim([0, area_size])   # limit the plot space
     
