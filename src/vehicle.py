@@ -84,9 +84,8 @@ class Vehicle:
     def constrain_multiple_vehicles(self, vehicles, d_veh):
         # Vehicle collision constraints
         new_vehicles = vehicles[0:self.id]+vehicles[self.id+1:len(vehicles)]  # list of vehicles excluding current object
+        R = 100000
         for veh in new_vehicles:
-            
-            R = 100000
             e = self.model.addVars(4, self.steps, lb=0, vtype=GRB.BINARY)
 
             self.model.addConstrs((self.x[i] - veh.x[i] >= d_veh - R * e[0, i] for i in range(self.steps - 1)))
